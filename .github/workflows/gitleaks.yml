@@ -1,6 +1,7 @@
 name: 🔐 GitLeaks - Secret Detection
 
 on:
+  workflow_call:
   push:
     branches:
       - "**"
