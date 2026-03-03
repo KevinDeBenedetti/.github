@@ -1,0 +1,121 @@
+name: Security
+
+on:
+  workflow_call:
+    inputs:
+      run-node-audit:
+        description: Run pnpm audit on Node.js apps
+        type: boolean
+        required: false
+        default: true
+      node-working-directory:
+        description: Path to Node.js app
+        type: string
+        required: false
+        default: '.'
+      run-python-audit:
+        description: Run pip-audit on Python apps
+        type: boolean
+        required: false
+        default: false
+      python-working-directory:
+        description: Path to Python app
+        type: string
+        required: false
+        default: '.'
+      run-codeql:
+        description: Run CodeQL SAST analysis
+        type: boolean
+        required: false
+        default: true
+      codeql-languages:
+        description: Comma-separated list of languages for CodeQL
+        type: string
+        required: false
+        default: javascript,typescript
+
+jobs:
+  # ── Dependency audit (Node) ─────────────────────────────────────────────────
+  audit-node:
+    name: Audit Node.js dependencies
+    if: inputs.run-node-audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: KevinDeBenedetti/.github/.github/actions/setup-node@main
+        with:
+          working-directory: ${{ inputs.node-working-directory }}
+
+      - name: pnpm audit
+        working-directory: ${{ inputs.node-working-directory }}
+        run: pnpm audit --audit-level=high
+
+  # ── Dependency audit (Python) ───────────────────────────────────────────────
+  audit-python:
+    name: Audit Python dependencies
+    if: inputs.run-python-audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: KevinDeBenedetti/.github/.github/actions/setup-python@main
+        with:
+          working-directory: ${{ inputs.python-working-directory }}
+
+      - name: pip-audit
+        working-directory: ${{ inputs.python-working-directory }}
+        run: uv run pip-audit
+
+  # ── Secret scanning ─────────────────────────────────────────────────────────
+  secret-scan:
+    name: Scan for leaked secrets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── CodeQL SAST ─────────────────────────────────────────────────────────────
+  codeql:
+    name: CodeQL (${{ matrix.language }})
+    if: inputs.run-codeql
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJson(format('["{0}"]', replace(inputs.codeql-languages, ',', '","'))) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:${{ matrix.language }}

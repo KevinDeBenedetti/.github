@@ -1,0 +1,114 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# ── Detect which apps changed ──────────────────────────────────────────────────
+jobs:
+  detect:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed-apps: ${{ steps.detect.outputs.changed-apps }}
+      has-changes:  ${{ steps.detect.outputs.has-changes }}
+      changed-api:    ${{ steps.detect.outputs.changed-api }}
+      changed-web:    ${{ steps.detect.outputs.changed-web }}
+      changed-client: ${{ steps.detect.outputs.changed-client }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed apps
+        id: detect
+        uses: KevinDeBenedetti/.github/.github/actions/detect-changes@main
+        with:
+          apps-directory: apps
+
+# ── CI — apps/api (FastAPI) ────────────────────────────────────────────────────
+  ci-api:
+    name: CI · api
+    needs: detect
+    if: needs.detect.outputs.changed-api == 'true'
+    uses: KevinDeBenedetti/.github/.github/workflows/ci-python.yml@main
+    with:
+      working-directory: apps/api
+    secrets: inherit
+
+# ── CI — apps/web (Next.js) ────────────────────────────────────────────────────
+  ci-web:
+    name: CI · web
+    needs: detect
+    if: needs.detect.outputs.changed-web == 'true'
+    uses: KevinDeBenedetti/.github/.github/workflows/ci-node.yml@main
+    with:
+      working-directory: apps/web
+    secrets: inherit
+
+# ── CI — apps/client (React) ───────────────────────────────────────────────────
+  ci-client:
+    name: CI · client
+    needs: detect
+    if: needs.detect.outputs.changed-client == 'true'
+    uses: KevinDeBenedetti/.github/.github/workflows/ci-node.yml@main
+    with:
+      working-directory: apps/client
+    secrets: inherit
+
+# ── Deploy preview (PR only) ───────────────────────────────────────────────────
+  deploy-web-preview:
+    name: Preview · web
+    needs: [detect, ci-web]
+    if: |
+      github.event_name == 'pull_request' &&
+      needs.detect.outputs.changed-web == 'true'
+    uses: KevinDeBenedetti/.github/.github/workflows/deploy-vercel.yml@main
+    with:
+      environment: preview
+      working-directory: apps/web
+    secrets: inherit
+
+# ── Deploy production (main only) ─────────────────────────────────────────────
+  deploy-web-prod:
+    name: Deploy · web → production
+    needs: [detect, ci-web]
+    if: |
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      needs.detect.outputs.changed-web == 'true'
+    uses: KevinDeBenedetti/.github/.github/workflows/deploy-vercel.yml@main
+    with:
+      environment: production
+      working-directory: apps/web
+    secrets: inherit
+
+  deploy-api-prod:
+    name: Deploy · api → Docker
+    needs: [detect, ci-api]
+    if: |
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      needs.detect.outputs.changed-api == 'true'
+    uses: KevinDeBenedetti/.github/.github/workflows/deploy-docker.yml@main
+    with:
+      context: apps/api
+      image-name: ${{ github.event.repository.name }}-api
+    secrets: inherit
+
+# ── Security (weekly + on push to main) ───────────────────────────────────────
+  security:
+    name: Security scan
+    needs: detect
+    if: |
+      github.ref == 'refs/heads/main' ||
+      github.event_name == 'schedule'
+    uses: KevinDeBenedetti/.github/.github/workflows/security.yml@main
+    with:
+      run-node-audit: true
+      run-python-audit: true
+      node-working-directory: apps/web
+      python-working-directory: apps/api
+    secrets: inherit
