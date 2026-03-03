@@ -4,10 +4,10 @@ on:
   workflow_call:
     inputs:
       release-type:
-        description: release-please release type (node, python, simple…)
+        description: release-please release type (node, python, simple…). Ignored when config-file is provided.
         type: string
         required: false
-        default: node
+        default: ''
       config-file:
         description: Path to release-please-config.json
         type: string
@@ -47,7 +47,7 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
-          release-type: ${{ inputs.release-type }}
+          release-type: ${{ inputs.release-type || '' }}
           config-file: ${{ inputs.config-file }}
           manifest-file: ${{ inputs.manifest-file }}
 
