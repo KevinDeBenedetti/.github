@@ -29,10 +29,10 @@ on:
         required: false
         default: true
       codeql-languages:
-        description: Comma-separated list of languages for CodeQL
+        description: JSON array of languages for CodeQL (e.g. '["javascript","typescript"]')
         type: string
         required: false
-        default: javascript,typescript
+        default: '["javascript","typescript"]'
 
 jobs:
   # ── Dependency audit (Node) ─────────────────────────────────────────────────
@@ -101,7 +101,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ${{ fromJson(format('["{0}"]', replace(inputs.codeql-languages, ',', '","'))) }}
+        language: ${{ fromJson(inputs.codeql-languages) }}
 
     steps:
       - name: Checkout

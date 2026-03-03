@@ -45,7 +45,7 @@ jobs:
       run-node-audit: true          # default: true
       run-python-audit: false       # default: false
       run-codeql: true              # default: true
-      codeql-languages: javascript,typescript  # default
+      codeql-languages: '["javascript","typescript"]'  # JSON array
 ```
 
 > **Note:** The `audit-node` and `audit-python` jobs rely on composite actions `actions/setup-node` and `actions/setup-python` located in this repository.
