@@ -1,0 +1,97 @@
+name: CI — Python
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version
+        type: string
+        required: false
+        default: '3.12'
+      working-directory:
+        description: Path to the app (e.g. apps/api)
+        type: string
+        required: false
+        default: '.'
+      run-lint:
+        description: Run ruff linter
+        type: boolean
+        required: false
+        default: true
+      run-format:
+        description: Check formatting with ruff format
+        type: boolean
+        required: false
+        default: true
+      run-typecheck:
+        description: Run ty type checker
+        type: boolean
+        required: false
+        default: true
+      run-test:
+        description: Run pytest
+        type: boolean
+        required: false
+        default: true
+      run-coverage:
+        description: Enable test coverage report (pytest-cov)
+        type: boolean
+        required: false
+        default: false
+      coverage-fail-under:
+        description: Minimum coverage percentage to pass
+        type: number
+        required: false
+        default: 80
+      test-command:
+        description: Custom pytest command (ignored when run-coverage is true)
+        type: string
+        required: false
+        default: 'uv run pytest --tb=short -q'
+
+concurrency:
+  group: ci-python-${{ github.workflow }}-${{ github.ref }}-${{ inputs.working-directory }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI (${{ inputs.working-directory }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: KevinDeBenedetti/.github/.github/actions/setup-python@main
+        with:
+          python-version: ${{ inputs.python-version }}
+          working-directory: ${{ inputs.working-directory }}
+
+      - name: Lint (ruff check)
+        if: inputs.run-lint
+        run: uv run ruff check --output-format github .
+
+      - name: Format (ruff format --check)
+        if: inputs.run-format
+        run: uv run ruff format --check .
+
+      - name: Type check (ty)
+        if: inputs.run-typecheck
+        run: uvx ty check --output-format github --quiet
+
+      - name: Test (pytest)
+        if: inputs.run-test && !inputs.run-coverage
+        run: ${{ inputs.test-command }}
+
+      - name: Test with coverage (pytest-cov)
+        if: inputs.run-test && inputs.run-coverage
+        run: >
+          uv run pytest
+          --tb=short -q
+          --cov
+          --cov-report=term-missing
+          --cov-fail-under=${{ inputs.coverage-fail-under }}

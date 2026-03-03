@@ -1,0 +1,50 @@
+name: Setup Python
+description: Install Python with uv and restore cache
+
+inputs:
+  python-version:
+    description: Python version to use
+    required: false
+    default: '3.12'
+  working-directory:
+    description: Directory containing pyproject.toml
+    required: false
+    default: '.'
+  install:
+    description: Run uv sync after setup
+    required: false
+    default: 'true'
+
+outputs:
+  cache-hit:
+    description: Whether the uv cache was hit
+    value: ${{ steps.cache.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: latest
+
+    - name: Setup Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Restore uv cache
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/uv
+        key: uv-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles(format('{0}/uv.lock', inputs.working-directory)) }}
+        restore-keys: |
+          uv-${{ runner.os }}-${{ inputs.python-version }}-
+          uv-${{ runner.os }}-
+
+    - name: Install dependencies
+      if: inputs.install == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: uv sync --frozen

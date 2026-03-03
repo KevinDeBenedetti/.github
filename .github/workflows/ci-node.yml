@@ -1,0 +1,149 @@
+name: CI — Node.js
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version
+        type: string
+        required: false
+        default: '20'
+      working-directory:
+        description: Path to the app (e.g. apps/web, or "." for standalone)
+        type: string
+        required: false
+        default: '.'
+      package-manager:
+        description: '"pnpm" | "bun" | "auto" (default — detects from lockfile)'
+        type: string
+        required: false
+        default: auto
+      framework:
+        description: >
+          Hint for build output path: "next" | "nuxt" | "vite" | "auto".
+          Used only when upload-build is true.
+        type: string
+        required: false
+        default: auto
+      run-lint:
+        description: Run lint script
+        type: boolean
+        required: false
+        default: true
+      run-typecheck:
+        description: Run typecheck script
+        type: boolean
+        required: false
+        default: true
+      run-test:
+        description: Run test suite
+        type: boolean
+        required: false
+        default: true
+      run-build:
+        description: Run build script
+        type: boolean
+        required: false
+        default: true
+      upload-build:
+        description: Upload build output as artifact
+        type: boolean
+        required: false
+        default: false
+      build-artifact-name:
+        description: Name for the uploaded build artifact
+        type: string
+        required: false
+        default: build
+
+concurrency:
+  group: ci-node-${{ github.workflow }}-${{ github.ref }}-${{ inputs.working-directory }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI (${{ inputs.working-directory }})
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup resolves pnpm or bun automatically from the lockfile
+      - name: Setup Node.js
+        id: setup
+        uses: KevinDeBenedetti/.github/.github/actions/setup-node@main
+        with:
+          node-version: ${{ inputs.node-version }}
+          working-directory: ${{ inputs.working-directory }}
+          package-manager: ${{ inputs.package-manager }}
+
+      # All run commands go through a helper so we write "run: ${{ env.RUN }} lint"
+      - name: Set run alias
+        shell: bash
+        run: |
+          PM="${{ steps.setup.outputs.package-manager }}"
+          if [ "$PM" = "bun" ]; then
+            echo "RUN=bun run" >> $GITHUB_ENV
+          else
+            echo "RUN=pnpm" >> $GITHUB_ENV
+          fi
+
+      - name: Lint
+        if: inputs.run-lint
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ env.RUN }} lint
+
+      - name: Type check
+        if: inputs.run-typecheck
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ env.RUN }} typecheck
+
+      - name: Test
+        if: inputs.run-test
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ env.RUN }} test --passWithNoTests
+
+      - name: Build
+        if: inputs.run-build
+        working-directory: ${{ inputs.working-directory }}
+        run: ${{ env.RUN }} build
+
+      # Resolve build output path per framework
+      - name: Resolve build output path
+        if: inputs.upload-build && inputs.run-build
+        id: output-path
+        shell: bash
+        run: |
+          FW="${{ inputs.framework }}"
+          DIR="${{ inputs.working-directory }}"
+
+          if [ "$FW" = "auto" ]; then
+            # Detect from config files
+            if [ -f "$DIR/next.config.ts" ] || [ -f "$DIR/next.config.js" ] || [ -f "$DIR/next.config.mjs" ]; then
+              FW="next"
+            elif [ -f "$DIR/nuxt.config.ts" ] || [ -f "$DIR/nuxt.config.js" ]; then
+              FW="nuxt"
+            else
+              FW="vite"
+            fi
+          fi
+
+          case "$FW" in
+            next)  OUT=".next"   ;;
+            nuxt)  OUT=".output" ;;
+            *)     OUT="dist"    ;;
+          esac
+
+          echo "path=${DIR}/${OUT}" >> $GITHUB_OUTPUT
+          echo "framework=$FW"     >> $GITHUB_OUTPUT
+          echo "🏗️ Framework: $FW → output: ${DIR}/${OUT}"
+
+      - name: Upload build artifact
+        if: inputs.upload-build && inputs.run-build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.build-artifact-name }}
+          path: ${{ steps.output-path.outputs.path }}
+          retention-days: 1
+          if-no-files-found: error

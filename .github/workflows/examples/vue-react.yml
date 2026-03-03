@@ -1,0 +1,37 @@
+name: CI/CD
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Standalone — Vue / React lib (Vite)
+# Build → dist/, publié sur GitHub Pages (Storybook ou app statique)
+# pnpm ou bun auto-détecté depuis le lockfile
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    uses: KevinDeBenedetti/.github/.github/workflows/ci-node.yml@main
+    with:
+      node-version: '20'
+      framework: vite
+    secrets: inherit
+
+  deploy-pages:
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    uses: KevinDeBenedetti/.github/.github/workflows/deploy-pages.yml@main
+    with:
+      output-directory: dist
+      # build-command: bun run build-storybook  # si Storybook
+      # output-directory: storybook-static      # si Storybook
+    secrets: inherit
+
+  release:
+    needs: deploy-pages
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    uses: KevinDeBenedetti/.github/.github/workflows/release.yml@main
+    secrets: inherit

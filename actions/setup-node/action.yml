@@ -1,0 +1,121 @@
+name: Setup Node.js
+description: >
+  Install Node.js and the right package manager (pnpm or bun),
+  restoring the appropriate cache. Auto-detects from lockfile.
+
+inputs:
+  node-version:
+    description: Node.js version
+    required: false
+    default: '20'
+  working-directory:
+    description: Directory to look for lockfile and run install
+    required: false
+    default: '.'
+  package-manager:
+    description: >
+      Force a package manager: "pnpm" | "bun" | "auto" (default).
+      "auto" detects from bun.lockb / bun.lock → bun, otherwise → pnpm.
+    required: false
+    default: auto
+  install:
+    description: Run install after setup
+    required: false
+    default: 'true'
+
+outputs:
+  package-manager:
+    description: Resolved package manager ("pnpm" or "bun")
+    value: ${{ steps.resolve.outputs.pm }}
+  cache-hit:
+    description: Whether the package cache was restored
+    value: ${{ steps.cache-pnpm.outputs.cache-hit || steps.cache-bun.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+
+    # ── 1. Resolve package manager ───────────────────────────────────────────
+    - name: Resolve package manager
+      id: resolve
+      shell: bash
+      run: |
+        INPUT="${{ inputs.package-manager }}"
+        DIR="${{ inputs.working-directory }}"
+
+        if [ "$INPUT" != "auto" ]; then
+          PM="$INPUT"
+        elif [ -f "$DIR/bun.lockb" ] || [ -f "$DIR/bun.lock" ]; then
+          PM="bun"
+        else
+          PM="pnpm"
+        fi
+
+        echo "pm=$PM" >> $GITHUB_OUTPUT
+        echo "📦 Package manager: $PM"
+
+    # ── 2a. Setup pnpm ───────────────────────────────────────────────────────
+    - name: Setup pnpm
+      if: steps.resolve.outputs.pm == 'pnpm'
+      uses: pnpm/action-setup@v3
+      with:
+        version: latest
+
+    - name: Setup Node.js (pnpm)
+      if: steps.resolve.outputs.pm == 'pnpm'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Get pnpm store path
+      if: steps.resolve.outputs.pm == 'pnpm'
+      id: pnpm-store
+      shell: bash
+      run: echo "path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+    - name: Restore pnpm cache
+      if: steps.resolve.outputs.pm == 'pnpm'
+      id: cache-pnpm
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pnpm-store.outputs.path }}
+        key: pnpm-${{ runner.os }}-${{ inputs.node-version }}-${{ hashFiles(format('{0}/pnpm-lock.yaml', inputs.working-directory)) }}
+        restore-keys: |
+          pnpm-${{ runner.os }}-${{ inputs.node-version }}-
+          pnpm-${{ runner.os }}-
+
+    # ── 2b. Setup bun ────────────────────────────────────────────────────────
+    - name: Setup Bun
+      if: steps.resolve.outputs.pm == 'bun'
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Setup Node.js (bun)
+      if: steps.resolve.outputs.pm == 'bun'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Restore bun cache
+      if: steps.resolve.outputs.pm == 'bun'
+      id: cache-bun
+      uses: actions/cache@v4
+      with:
+        path: ~/.bun/install/cache
+        key: bun-${{ runner.os }}-${{ hashFiles(format('{0}/bun.lock*', inputs.working-directory)) }}
+        restore-keys: |
+          bun-${{ runner.os }}-
+
+    # ── 3. Install dependencies ───────────────────────────────────────────────
+    - name: Install (pnpm)
+      if: inputs.install == 'true' && steps.resolve.outputs.pm == 'pnpm'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm install --frozen-lockfile
+
+    - name: Install (bun)
+      if: inputs.install == 'true' && steps.resolve.outputs.pm == 'bun'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: bun install --frozen-lockfile

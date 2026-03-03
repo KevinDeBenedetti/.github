@@ -1,19 +1,26 @@
 name: CI/CD
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Monorepo — apps/*
+#
+# Chaque sous-app est détectée automatiquement.
+# Le package manager (pnpm ou bun) est auto-détecté par lockfile dans chaque app.
+# Ajoute autant de blocs ci-<app> / deploy-<app> que nécessaire.
+# ─────────────────────────────────────────────────────────────────────────────
+
 on:
   push:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
-# ── Detect which apps changed ──────────────────────────────────────────────────
 jobs:
+
+  # ── Detect changed apps ───────────────────────────────────────────────────
   detect:
     name: Detect changes
     runs-on: ubuntu-latest
     outputs:
-      changed-apps: ${{ steps.detect.outputs.changed-apps }}
-      has-changes:  ${{ steps.detect.outputs.has-changes }}
       changed-api:    ${{ steps.detect.outputs.changed-api }}
       changed-web:    ${{ steps.detect.outputs.changed-web }}
       changed-client: ${{ steps.detect.outputs.changed-client }}
@@ -21,16 +28,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Detect changed apps
-        id: detect
+      - id: detect
         uses: KevinDeBenedetti/.github/.github/actions/detect-changes@main
         with:
           apps-directory: apps
 
-# ── CI — apps/api (FastAPI) ────────────────────────────────────────────────────
+  # ── CI apps/api — FastAPI ─────────────────────────────────────────────────
   ci-api:
-    name: CI · api
     needs: detect
     if: needs.detect.outputs.changed-api == 'true'
     uses: KevinDeBenedetti/.github/.github/workflows/ci-python.yml@main
@@ -38,19 +42,19 @@ jobs:
       working-directory: apps/api
     secrets: inherit
 
-# ── CI — apps/web (Next.js) ────────────────────────────────────────────────────
+  # ── CI apps/web — Next.js ou Nuxt (pnpm ou bun, auto-détecté) ─────────────
   ci-web:
-    name: CI · web
     needs: detect
     if: needs.detect.outputs.changed-web == 'true'
     uses: KevinDeBenedetti/.github/.github/workflows/ci-node.yml@main
     with:
       working-directory: apps/web
+      # package-manager: bun  # décommente pour forcer
+      # framework: nuxt       # décommente si Nuxt (sinon auto-détecté)
     secrets: inherit
 
-# ── CI — apps/client (React) ───────────────────────────────────────────────────
+  # ── CI apps/client — React ou Vue (pnpm ou bun, auto-détecté) ─────────────
   ci-client:
-    name: CI · client
     needs: detect
     if: needs.detect.outputs.changed-client == 'true'
     uses: KevinDeBenedetti/.github/.github/workflows/ci-node.yml@main
@@ -58,9 +62,8 @@ jobs:
       working-directory: apps/client
     secrets: inherit
 
-# ── Deploy preview (PR only) ───────────────────────────────────────────────────
+  # ── Deploy preview — web (PR uniquement) ──────────────────────────────────
   deploy-web-preview:
-    name: Preview · web
     needs: [detect, ci-web]
     if: |
       github.event_name == 'pull_request' &&
@@ -71,9 +74,8 @@ jobs:
       working-directory: apps/web
     secrets: inherit
 
-# ── Deploy production (main only) ─────────────────────────────────────────────
+  # ── Deploy production — web ───────────────────────────────────────────────
   deploy-web-prod:
-    name: Deploy · web → production
     needs: [detect, ci-web]
     if: |
       github.ref == 'refs/heads/main' &&
@@ -85,8 +87,8 @@ jobs:
       working-directory: apps/web
     secrets: inherit
 
+  # ── Deploy production — api ───────────────────────────────────────────────
   deploy-api-prod:
-    name: Deploy · api → Docker
     needs: [detect, ci-api]
     if: |
       github.ref == 'refs/heads/main' &&
@@ -98,13 +100,10 @@ jobs:
       image-name: ${{ github.event.repository.name }}-api
     secrets: inherit
 
-# ── Security (weekly + on push to main) ───────────────────────────────────────
+  # ── Security (main seulement) ─────────────────────────────────────────────
   security:
-    name: Security scan
     needs: detect
-    if: |
-      github.ref == 'refs/heads/main' ||
-      github.event_name == 'schedule'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     uses: KevinDeBenedetti/.github/.github/workflows/security.yml@main
     with:
       run-node-audit: true
