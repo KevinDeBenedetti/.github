@@ -8,6 +8,15 @@ This repository provides shared GitHub configuration applied automatically acros
 
 ## Contents
 
+### Community Health Files
+
+| File                 | Description                                                                      |
+| -------------------- | -------------------------------------------------------------------------------- |
+| `CODE_OF_CONDUCT.md` | Contributor Covenant v2.1 — expectations for community behavior                  |
+| `CONTRIBUTING.md`    | How to report bugs, suggest features, and submit pull requests                   |
+| `SECURITY.md`        | Supported versions, vulnerability reporting process, and security best practices |
+| `SUPPORT.md`         | Where to get help (Discussions, issues, docs)                                    |
+
 ### Issue Templates
 
 | Template            | Description                                            |
@@ -19,7 +28,25 @@ Blank issues are disabled — all contributors use a template or open a [Discuss
 
 ### Pull Request Template
 
-Located at `.github/PULL_REQUEST_TEMPLATE.md`. Prompts contributors to describe their changes, classify the type of change, and confirm their checklist before opening a PR.
+Located at `.github/PULL_REQUEST_TEMPLATE.md`. Prompts contributors to describe their changes, classify the PR type, and confirm their checklist before opening a PR.
+
+### Discussion Templates
+
+Located in `.github/DISCUSSION_TEMPLATE/`. Pre-fills new discussion forms by category.
+
+| Template            | Description                                       |
+| ------------------- | ------------------------------------------------- |
+| `announcements.yml` | Official announcements from maintainers           |
+| `general.yml`       | Open-ended conversations and feedback             |
+| `q-and-a.yml`       | Structured Q&A with checklist to avoid duplicates |
+
+### Code Owners
+
+`.github/CODEOWNERS` assigns automatic review requests to `@KevinDeBenedetti` for all files in this repository.
+
+### Funding
+
+`.github/FUNDING.yml` links GitHub Sponsors to this account.
 
 ### Reusable Workflows
 

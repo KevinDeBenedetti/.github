@@ -33,10 +33,10 @@ Please provide as much of the following as possible:
 
 ## Response Process
 
-| Step | Target time |
-| ---- | ----------- |
-| Acknowledgement of report | 48 hours |
-| Initial assessment | 5 business days |
+| Step                         | Target time              |
+| ---------------------------- | ------------------------ |
+| Acknowledgement of report    | 48 hours                 |
+| Initial assessment           | 5 business days          |
 | Fix & coordinated disclosure | Negotiated with reporter |
 
 ---

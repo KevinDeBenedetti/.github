@@ -4,14 +4,16 @@ Thank you for considering a contribution! This document explains how to report b
 
 ## Table of Contents
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [How to Contribute](#how-to-contribute)
-  - [Reporting Bugs](#reporting-bugs)
-  - [Suggesting Features](#suggesting-features)
-  - [Submitting a Pull Request](#submitting-a-pull-request)
-- [Style Guide](#style-guide)
-- [Commit Message Convention](#commit-message-convention)
+- [Contributing](#contributing)
+  - [Table of Contents](#table-of-contents)
+  - [Code of Conduct](#code-of-conduct)
+  - [Getting Started](#getting-started)
+  - [How to Contribute](#how-to-contribute)
+    - [Reporting Bugs](#reporting-bugs)
+    - [Suggesting Features](#suggesting-features)
+    - [Submitting a Pull Request](#submitting-a-pull-request)
+  - [Style Guide](#style-guide)
+  - [Commit Message Convention](#commit-message-convention)
 
 ---
 
