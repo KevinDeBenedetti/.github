@@ -1,0 +1,35 @@
+title: "❓ Q&A"
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask a question about the workflows, templates, or community health files in this repository.
+        Please search [existing discussions](../../discussions) before opening a new one.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: Describe what you are trying to achieve or understand.
+      placeholder: "How do I call the reusable `security.yml` workflow from my repository?"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: >
+        Provide any relevant context: which workflow or template you are using,
+        what you have already tried, and any error messages you see.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before you post
+      options:
+        - label: I have searched existing discussions and issues for a similar question.
+          required: true
+        - label: I have not included secrets, credentials, or personal data.
+          required: true

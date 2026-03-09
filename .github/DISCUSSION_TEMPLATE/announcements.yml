@@ -1,0 +1,16 @@
+title: "📣 Announcement"
+labels:
+  - announcement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for official announcements about the project.
+        Only maintainers should post here.
+  - type: textarea
+    id: content
+    attributes:
+      label: Announcement
+      description: What would you like to announce?
+    validations:
+      required: true

@@ -1,0 +1,16 @@
+title: "💬 General"
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome! Use this space for open-ended conversations about the project.
+        For bugs, please open an [issue](../../issues/new/choose).
+        For questions, consider using the **Q&A** category.
+  - type: textarea
+    id: content
+    attributes:
+      label: What's on your mind?
+      description: Share your thoughts, feedback, or ideas.
+    validations:
+      required: true

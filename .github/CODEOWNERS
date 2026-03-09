@@ -1,0 +1,24 @@
+# CODEOWNERS
+# Each line is a file pattern followed by one or more owners.
+# Owners are automatically requested for review when someone opens a pull request
+# that modifies matching files.
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repository
+* @KevinDeBenedetti
+
+# Community health files
+CODE_OF_CONDUCT.md @KevinDeBenedetti
+CONTRIBUTING.md    @KevinDeBenedetti
+SECURITY.md        @KevinDeBenedetti
+SUPPORT.md         @KevinDeBenedetti
+
+# Issue and PR templates
+.github/ISSUE_TEMPLATE/  @KevinDeBenedetti
+.github/PULL_REQUEST_TEMPLATE.md @KevinDeBenedetti
+
+# Reusable workflows
+.github/workflows/ @KevinDeBenedetti
+
+# Discussion templates
+.github/DISCUSSION_TEMPLATE/ @KevinDeBenedetti
