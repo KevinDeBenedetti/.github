@@ -1,10 +1,34 @@
 # .github
 
-Default community health files and reusable workflows for all repositories under [@KevinDeBenedetti](https://github.com/KevinDeBenedetti).
+Default community health files for all repositories under [@KevinDeBenedetti](https://github.com/KevinDeBenedetti).
 
 ## Overview
 
-This repository provides shared GitHub configuration applied automatically across all public repositories that do not define their own equivalents.
+This is a special public repository. GitHub automatically uses its community health files as defaults for any repository owned by the account that does not define its own. If a repository has its own file (e.g. `CONTRIBUTING.md` or `.github/ISSUE_TEMPLATE/`), it takes precedence over the defaults here.
+
+> Reusable workflows and composite actions live in a separate repository: [`github-workflows`](https://github.com/KevinDeBenedetti/github-workflows).
+
+## Structure
+
+```
+.
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── SECURITY.md
+├── SUPPORT.md
+└── .github/
+    ├── CODEOWNERS
+    ├── FUNDING.yml
+    ├── PULL_REQUEST_TEMPLATE.md
+    ├── DISCUSSION_TEMPLATE/
+    │   ├── announcements.yml
+    │   ├── general.yml
+    │   └── q-and-a.yml
+    └── ISSUE_TEMPLATE/
+        ├── bug_report.md
+        ├── config.yml
+        └── feature_request.md
+```
 
 ## Contents
 
@@ -19,66 +43,38 @@ This repository provides shared GitHub configuration applied automatically acros
 
 ### Issue Templates
 
-| Template            | Description                                            |
-| ------------------- | ------------------------------------------------------ |
-| `🐛 Bug report`      | Structured report for identifying and reproducing bugs |
-| `✨ Feature request` | Proposal for new features or improvements              |
+| Template            | Label         | Description                               |
+| ------------------- | ------------- | ----------------------------------------- |
+| `🐛 Bug report`      | `bug`         | Structured report for reproducing bugs    |
+| `✨ Feature request` | `enhancement` | Proposal for new features or improvements |
 
-Blank issues are disabled — all contributors use a template or open a [Discussion](https://github.com/KevinDeBenedetti/KevinDeBenedetti/discussions).
+Blank issues are disabled — contributors must use a template or open a [Discussion](https://github.com/KevinDeBenedetti/KevinDeBenedetti/discussions).
 
 ### Pull Request Template
 
-Located at `.github/PULL_REQUEST_TEMPLATE.md`. Prompts contributors to describe their changes, classify the PR type, and confirm their checklist before opening a PR.
+Located at `.github/PULL_REQUEST_TEMPLATE.md`. Prompts contributors to describe their changes, classify the PR type (bug fix, feature, docs, refactor, CI, breaking change), and confirm a checklist before submitting.
 
 ### Discussion Templates
 
 Located in `.github/DISCUSSION_TEMPLATE/`. Pre-fills new discussion forms by category.
 
-| Template            | Description                                       |
-| ------------------- | ------------------------------------------------- |
-| `announcements.yml` | Official announcements from maintainers           |
-| `general.yml`       | Open-ended conversations and feedback             |
-| `q-and-a.yml`       | Structured Q&A with checklist to avoid duplicates |
+| Template              | Label          | Description                                       |
+| --------------------- | -------------- | ------------------------------------------------- |
+| `📣 announcements.yml` | `announcement` | Official announcements from maintainers           |
+| `💬 general.yml`       | —              | Open-ended conversations and feedback             |
+| `❓ q-and-a.yml`       | `question`     | Structured Q&A with checklist to avoid duplicates |
 
 ### Code Owners
 
-`.github/CODEOWNERS` assigns automatic review requests to `@KevinDeBenedetti` for all files in this repository.
+`.github/CODEOWNERS` assigns `@KevinDeBenedetti` as the default reviewer for all files in this repository.
 
 ### Funding
 
-`.github/FUNDING.yml` links GitHub Sponsors to this account.
-
-### Reusable Workflows
-
-All workflows are triggered via `workflow_call` and can be called from any repository.
-
-| Workflow            | Description                                                                                                                           |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `security.yml`      | **Security audit** — dependency audit (pnpm / pip-audit), secret scanning (GitLeaks), and CodeQL SAST. Fully configurable via inputs. |
-| `ci-node.yml`       | **CI for Node.js** — install, lint, build, and test a Node.js / pnpm project                                                          |
-| `ci-python.yml`     | **CI for Python** — install (uv), lint, and test a Python project                                                                     |
-| `release.yml`       | **Release** — automates releases via release-please                                                                                   |
-| `deploy-docker.yml` | **Docker** — build and push an image to a container registry                                                                          |
-| `deploy-pages.yml`  | **GitHub Pages** — build and deploy a static site                                                                                     |
-| `deploy-vercel.yml` | **Vercel** — deploy to a preview or production environment                                                                            |
-
-#### Usage example — security
-
-```yaml
-jobs:
-  security:
-    uses: KevinDeBenedetti/.github/.github/workflows/security.yml@main
-    with:
-      run-node-audit: true          # default: true
-      run-python-audit: false       # default: false
-      run-codeql: true              # default: true
-      codeql-languages: '["javascript","typescript"]'  # JSON array
-```
-
-> **Note:** The `audit-node` and `audit-python` jobs rely on composite actions `actions/setup-node` and `actions/setup-python` located in this repository.
+`.github/FUNDING.yml` links [GitHub Sponsors](https://github.com/sponsors/KevinDeBenedetti) to this account.
 
 ## References
 
 - [GitHub Docs — Default community health files](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file)
-- [GitHub Docs — Reusing workflows](https://docs.github.com/en/actions/using-workflows/reusing-workflows)
+- [GitHub Docs — About issue and pull request templates](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests)
+- [GitHub Docs — About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)
 
