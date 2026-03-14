@@ -1,0 +1,25 @@
+# =============================================================================
+# prek.toml — git hook configuration (https://prek.j178.dev)
+# prek is a faster, dependency-free alternative to pre-commit (written in Rust)
+#
+# Install prek:   brew install j178/tap/prek
+# Install hooks:  prek install       (run once after cloning)
+# Run all:        prek run --all-files
+# Run staged:     prek run
+# Update revs:    prek autoupdate
+# =============================================================================
+
+minimum_prek_version = "0.3.0"
+fail_fast = false
+default_install_hook_types = ["pre-commit"]
+
+# ─── General file hygiene ───────────────────────────────────────────────────
+[[repos]]
+repo = "https://github.com/pre-commit/pre-commit-hooks"
+rev = "v5.0.0"
+hooks = [
+  { id = "trailing-whitespace", args = ["--markdown-linebreak-ext=md"] },
+  { id = "end-of-file-fixer" },
+  { id = "check-merge-conflict" },
+  { id = "mixed-line-ending", args = ["--fix=lf"] },
+]
