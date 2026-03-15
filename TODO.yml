@@ -1,5 +1,5 @@
 issues:
-  - github_id: ~
+  - github_id: 2
     type: feat
     title: Test feature issue sync between TODO.yml and GitHub Issues
     status: backlog
