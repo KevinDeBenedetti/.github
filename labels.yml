@@ -1,5 +1,5 @@
 labels:
-  # ── Type labels (mirrors TYPE_LABEL_MAP in scripts/sync-todo.js) ──────────
+  # ── Type labels (mirrors TYPE_LABEL_MAP in scripts/sync-todo.ts) ──────────
   - name: feature
     color: "0075ca"
     description: "New feature or improvement"
@@ -23,3 +23,33 @@ labels:
   - name: security
     color: "b60205"
     description: "Security fix or improvement"
+
+  # ── Status labels (mirrors STATUS_LABEL_MAP in scripts/sync-todo.ts) ──────
+  - name: "status: backlog"
+    color: "c2e0c6"
+    description: "Not yet started"
+
+  - name: "status: in-progress"
+    color: "fef2c0"
+    description: "Actively being worked on"
+
+  - name: "status: to-review"
+    color: "fbca04"
+    description: "Ready for review"
+
+  - name: "status: done"
+    color: "0e8a16"
+    description: "Completed"
+
+  # ── Priority labels (mirrors PRIORITY_LABEL_MAP in scripts/sync-todo.ts) ──
+  - name: "priority: high"
+    color: "b60205"
+    description: "Must be addressed urgently"
+
+  - name: "priority: medium"
+    color: "ff7619"
+    description: "Important but not urgent"
+
+  - name: "priority: low"
+    color: "e4e669"
+    description: "Nice to have"

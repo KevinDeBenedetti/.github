@@ -1,0 +1,15 @@
+on:
+  push:
+    branches: [main]
+    paths: ['labels.yml']
+  workflow_dispatch:
+
+jobs:
+  sync-labels:
+    permissions:
+      issues: write
+    uses: KevinDeBenedetti/github-workflows/.github/workflows/label-sync.yml@main
+    with:
+      labels-path: labels.yml
+    secrets:
+      token: ${{ secrets.PAT_TOKEN }}
