@@ -1,0 +1,25 @@
+labels:
+  # ── Type labels (mirrors TYPE_LABEL_MAP in scripts/sync-todo.js) ──────────
+  - name: feature
+    color: "0075ca"
+    description: "New feature or improvement"
+
+  - name: bug
+    color: "d73a4a"
+    description: "Something isn't working"
+
+  - name: refactor
+    color: "e4e669"
+    description: "Code refactoring without functional change"
+
+  - name: chore
+    color: "ededed"
+    description: "Maintenance, tooling, or dependencies"
+
+  - name: documentation
+    color: "0052cc"
+    description: "Improvements or additions to documentation"
+
+  - name: security
+    color: "b60205"
+    description: "Security fix or improvement"
