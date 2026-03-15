@@ -1,1 +1,17 @@
-issues: []
+issues:
+  - github_id: ~
+    type: feat
+    title: Test feature issue sync between TODO.yml and GitHub Issues
+    status: backlog
+    priority: medium
+    assignees:
+      - KevinDeBenedetti
+    body: |
+      ## Goal
+      Validate that the bidirectional sync between TODO.yml and GitHub Issues works end-to-end.
+
+      ## Acceptance criteria
+      - [ ] Push mode creates this issue and writes back github_id
+      - [ ] Updating status/priority/title in TODO.yml reflects on the issue
+      - [ ] Closing the issue via GitHub triggers pull mode and removes this entry
+      - [ ] Setting status: done in TODO.yml closes the issue and removes this entry
