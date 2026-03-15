@@ -1,3 +1,5 @@
+name: Sync labels
+
 on:
   push:
     branches: [main]
@@ -7,6 +9,7 @@ on:
 jobs:
   sync-labels:
     permissions:
+      contents: read
       issues: write
     uses: KevinDeBenedetti/github-workflows/.github/workflows/label-sync.yml@main
     with:

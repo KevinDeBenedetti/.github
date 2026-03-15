@@ -1,28 +1,17 @@
+name: TODO sync
+
 on:
   push:
     branches: [main]
     paths: ['TODO.yml']
-  issues:
-    types: [labeled, unlabeled, closed, reopened, edited, assigned]
   workflow_dispatch:
 
 jobs:
-  push-to-issues:
-    if: github.event_name != 'issues'
+  sync:
     permissions:
       contents: write
       issues: write
+      pull-requests: write
     uses: KevinDeBenedetti/github-workflows/.github/workflows/todo-yml-push.yml@main
-    secrets:
-      token: ${{ secrets.PAT_TOKEN }}
-
-  pull-to-todo:
-    if: github.event_name == 'issues'
-    permissions:
-      contents: write
-      issues: write
-    uses: KevinDeBenedetti/github-workflows/.github/workflows/todo-yml-pull.yml@main
-    with:
-      issue-number: ${{ github.event.issue.number }}
     secrets:
       token: ${{ secrets.PAT_TOKEN }}
