@@ -56,7 +56,9 @@ By participating you agree to abide by its terms.
 
 1. Keep changes **focused** — one concern per pull request.
 2. Reference the related issue(s) in the PR description (`Closes #123`).
-3. Fill in the [pull request template](.github/PULL_REQUEST_TEMPLATE.md) completely.
+3. Fill in the [pull request template](.github/PULL_REQUEST_TEMPLATE.md). Where the
+   pr-description workflow runs, Summary and Changes are written from the commits:
+   complete the other sections.
 4. Ensure all CI checks pass before requesting review.
 5. Be responsive to review feedback — address comments within a reasonable time.
 

@@ -9,7 +9,7 @@
 - `SECURITY.md` — supported versions, vulnerability reporting, and security best practices
 - `SUPPORT.md` — where to get help (Discussions, issues, docs)
 - Issue templates: 🐛 Bug report and ✨ Feature request (blank issues disabled)
-- `PULL_REQUEST_TEMPLATE.md` — change description, type classification, and checklist
+- `PULL_REQUEST_TEMPLATE.md` — summary and changes (written from the commits where the [pr-description workflow](https://kevindebenedetti.github.io/github-workflows/workflows/pr-description) runs), related issues, test steps, and checklist
 - Discussion templates: announcements, general, and Q&A
 - `CODEOWNERS` — assigns `@KevinDeBenedetti` as default reviewer
 - `FUNDING.yml` — links [GitHub Sponsors](https://github.com/sponsors/KevinDeBenedetti)
