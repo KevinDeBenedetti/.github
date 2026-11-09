@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Deny-all default: each job grants only the permissions it needs.
+permissions: {}
+
+jobs:
+  # Re-runs prek.toml server-side, for changes that never went through the
+  # local hooks (web edits, --no-verify pushes).
+  prek:
+    name: prek
+    # Pinned to a github-workflows release by full commit SHA, never @main: a
+    # change there reaches this repository only when the pin moves.
+    uses: KevinDeBenedetti/github-workflows/.github/workflows/ci-prek.yml@0c3f6cd063dd809a39041c734f6b0b539b9d0252 # v0.40.0
+    permissions:
+      contents: read

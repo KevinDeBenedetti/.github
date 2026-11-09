@@ -16,10 +16,23 @@ default_install_hook_types = ["pre-commit"]
 # ─── General file hygiene ───────────────────────────────────────────────────
 [[repos]]
 repo = "https://github.com/pre-commit/pre-commit-hooks"
-rev = "v5.0.0"
+# renovate: datasource=github-tags depName=pre-commit/pre-commit-hooks
+rev = "v6.0.0"
 hooks = [
   { id = "trailing-whitespace", args = ["--markdown-linebreak-ext=md"] },
   { id = "end-of-file-fixer" },
+  { id = "check-yaml" },
+  { id = "check-json" },
   { id = "check-merge-conflict" },
+  { id = "detect-private-key" },
   { id = "mixed-line-ending", args = ["--fix=lf"] },
+]
+
+# ─── GitHub Actions workflow linting ────────────────────────────────────────
+[[repos]]
+repo = "https://github.com/rhysd/actionlint"
+# renovate: datasource=github-tags depName=rhysd/actionlint
+rev = "v1.7.12"
+hooks = [
+  { id = "actionlint" },
 ]

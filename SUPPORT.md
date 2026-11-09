@@ -1,50 +1,31 @@
 # Support
 
-Thank you for using this repository! Here is how to get help.
+How to get help with a repository of
+[@KevinDeBenedetti](https://github.com/KevinDeBenedetti) that has no
+`SUPPORT.md` of its own.
 
----
+## Documentation
 
-## Community Discussions
+Start with the repository's README. Projects with a `docs/` folder publish it
+on the [documentation hub](https://kevindebenedetti.github.io/).
 
-For questions, ideas, or general conversation, please use
-[GitHub Discussions](https://github.com/KevinDeBenedetti/KevinDeBenedetti/discussions).
+## Questions
 
-Discussions are the preferred channel for:
+Write through the [contact form on kevindb.dev](https://kevindb.dev/en#contact).
+When the repository has Discussions enabled, ask there instead: the answer
+then helps the next person too.
 
-- Questions about how to use or configure the workflows and templates
-- Troubleshooting issues before opening a bug report
-- Sharing feedback or suggestions
+## Bug reports and feature requests
 
----
+Search the existing issues of the repository concerned, then open one with the
+**🐛 Bug report** or **✨ Feature request** template.
 
-## Bug Reports
+## Security vulnerabilities
 
-If you have identified a confirmed bug, open an issue using the
-[🐛 Bug report](../../issues/new/choose) template.
+**Do not open a public issue for a security vulnerability.** Follow the
+process described in [SECURITY.md](SECURITY.md).
 
-Please search [existing issues](../../issues) first to avoid duplicates.
+## Out of scope
 
----
-
-## Feature Requests
-
-If you have an idea for a new feature or improvement, open an issue using the
-[✨ Feature request](../../issues/new/choose) template.
-
----
-
-## Security Vulnerabilities
-
-**Do not open a public issue for security vulnerabilities.**
-Follow the process described in [SECURITY.md](SECURITY.md).
-
----
-
-## Out of Scope
-
-This repository does not provide general consulting or personalized support.
-For questions unrelated to the files in this repository, refer to the official
-GitHub documentation:
-
-- [GitHub Actions docs](https://docs.github.com/en/actions)
-- [Community health files](https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/creating-a-default-community-health-file)
+General consulting and personalized support. For questions about GitHub
+itself, see the [GitHub documentation](https://docs.github.com/).

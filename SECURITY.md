@@ -1,65 +1,31 @@
-# Security Policy
+# Security policy
 
-## Supported Versions
+This is the default security policy of the repositories of
+[@KevinDeBenedetti](https://github.com/KevinDeBenedetti): a repository with a
+`SECURITY.md` of its own follows that one instead.
 
-Community health files and reusable workflows in this repository are actively maintained.
-Only the latest version on the `main` branch is supported.
+## Reporting a vulnerability
 
-| Version | Supported |
-| ------- | --------- |
-| `main`  | ✅         |
+Please **do not open a public issue**. Report privately through GitHub:
+**Security → Report a vulnerability** on the repository concerned (private
+vulnerability reporting). If the repository does not offer that button, write
+through the [contact form on kevindb.dev](https://kevindb.dev/en#contact)
+instead.
 
----
+Include the affected repository and file, the version (release tag or commit
+SHA) and, if possible, a reproduction.
 
-## Reporting a Vulnerability
+You can expect an acknowledgement within a few days. Fixes ship in the next
+release; the advisory is published once that release is out.
 
-**Please do not report security vulnerabilities through public GitHub issues.**
+## Supported versions
 
-If you discover a security vulnerability, use one of the following private channels:
-
-1. **GitHub Private Security Advisory** — open a [Security Advisory](../../security/advisories/new) directly in this repository *(preferred)*.
-2. **Email** — send details to the repository owner via the contact information on their [GitHub profile](https://github.com/KevinDeBenedetti).
-
-### What to include
-
-Please provide as much of the following as possible:
-
-- A description of the vulnerability and its potential impact
-- The affected file(s) or workflow(s)
-- Steps to reproduce or a proof-of-concept
-- Any suggested mitigation or fix
-
----
-
-## Response Process
-
-| Step                         | Target time              |
-| ---------------------------- | ------------------------ |
-| Acknowledgement of report    | 48 hours                 |
-| Initial assessment           | 5 business days          |
-| Fix & coordinated disclosure | Negotiated with reporter |
-
----
-
-## Security Best Practices for Consumers
-
-When calling reusable workflows from this repository:
-
-- **Pin to a commit SHA** rather than a branch or floating tag to prevent supply-chain attacks.
-- **Review workflow code** before using it in a sensitive pipeline.
-- **Use least-privilege tokens** — pass only the permissions your workflow actually needs via `secrets`.
-- **Audit third-party actions** used inside these workflows before granting them access to your secrets.
-
-```yaml
-# Recommended: pin to SHA
-jobs:
-  security:
-    uses: KevinDeBenedetti/.github/.github/workflows/security.yml@<commit-sha>
-```
-
----
+Only the latest release receives fixes. For a repository that does not
+publish releases, that is the latest commit of its default branch.
 
 ## Scope
 
-This policy covers the workflows, templates, and community health files hosted in this repository.
-For vulnerabilities in projects that *consume* these workflows, please report to the respective repository.
+In scope: the code of the repository, what it publishes (packages, container
+images, sites) and its GitHub Actions workflows. A vulnerability in a
+third-party dependency belongs upstream; report it here as well when the way
+the project uses that dependency makes it exploitable.
